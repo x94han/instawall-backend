@@ -3,26 +3,6 @@ const AppError = require("../utility/appError");
 const httpStatusCodes = require("../utility/httpStatusCodes");
 const catchAsync = require("../utility/catchAsync");
 
-exports.addNewUser = catchAsync(async (req, res, next) => {
-  const { email, password, passwordConfirm, screenName } = req.body;
-
-  if (!email || !password || !passwordConfirm || !screenName) {
-    next(new AppError("欄位填寫不正確", httpStatusCodes.BAD_REQUEST));
-  }
-
-  const newUser = await User.create({
-    email,
-    password,
-    passwordConfirm,
-    screenName,
-  });
-
-  res.status(httpStatusCodes.CREATED).send({
-    status: "success",
-    data: newUser,
-  });
-});
-
 exports.updateUser = catchAsync(async (req, res, next) => {
   const { account, password, screenName, avatar, gender } = req.body;
   const editedUser = await User.findByIdAndUpdate(

@@ -35,4 +35,19 @@ exports.signup = catchAsync(async (req, res, next) => {
   await createAndSendToken(newUser, httpStatusCodes.CREATED, res);
 });
 
-exports.login = catchAsync(async (req, res, next) => {});
+// 登入
+exports.login = catchAsync(async (req, res, next) => {
+  const { email, password } = req.body;
+
+  if (!email || !password)
+    return next(new AppError("請輸入信箱或密碼", httpStatusCodes.BAD_REQUEST));
+
+  const foundUser = await User.findOne({ email }).select("+password");
+  if (
+    !foundUser ||
+    !(await foundUser.isCorrectPassword(password, foundUser.password))
+  )
+    return next(new AppError("帳號或密碼錯誤", httpStatusCodes.UNAUTHORIZED));
+
+  await createAndSendToken(foundUser, httpStatusCodes.OK, res);
+});
