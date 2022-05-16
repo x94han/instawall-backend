@@ -4,15 +4,16 @@ const httpStatusCodes = require("../utility/httpStatusCodes");
 const catchAsync = require("../utility/catchAsync");
 
 exports.addNewUser = catchAsync(async (req, res, next) => {
-  const { account, password, screenName } = req.body;
+  const { account, password, passwordConfirm, screenName } = req.body;
 
-  if (!account || !password || !screenName) {
+  if (!account || !password || !passwordConfirm || !screenName) {
     next(new AppError("欄位填寫不正確", httpStatusCodes.BAD_REQUEST));
   }
 
   const newUser = await User.create({
     account,
     password,
+    passwordConfirm,
     screenName,
   });
 
