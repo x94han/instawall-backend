@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
+const validator = require("validator");
 
 /*
   gender
@@ -11,15 +12,18 @@ const bcrypt = require("bcryptjs");
 
 const userSchema = new mongoose.Schema(
   {
-    account: {
+    email: {
       type: String,
-      required: [true, "Account is required."],
+      trim: true,
+      required: [true, "Email is required."],
       unique: true,
+      validate: [validator.isEmail, "Please provide a valid email."],
     },
     password: {
       type: String,
       required: [true, "Password is required."],
       minlength: 8,
+      select: false,
     },
     passwordConfirm: {
       type: String,
@@ -30,10 +34,13 @@ const userSchema = new mongoose.Schema(
         },
         message: "Passwords are not the same!",
       },
+      select: false,
     },
     screenName: {
       type: String,
+      trim: true,
       required: [true, "ScreenName is required."],
+      minlength: 2,
     },
     avatar: {
       type: String,
