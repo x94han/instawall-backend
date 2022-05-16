@@ -3,13 +3,18 @@ const AppError = require("../utility/appError");
 const httpStatusCodes = require("../utility/httpStatusCodes");
 const catchAsync = require("../utility/catchAsync");
 
-exports.updateUser = catchAsync(async (req, res, next) => {
-  const { account, password, screenName, avatar, gender } = req.body;
+exports.getProfile = catchAsync(async (req, res, next) => {
+  res.status(httpStatusCodes.OK).send({
+    status: "success",
+    data: req.user,
+  });
+});
+
+exports.updateProfile = catchAsync(async (req, res, next) => {
+  const { screenName, avatar, gender } = req.body;
   const editedUser = await User.findByIdAndUpdate(
-    req.params.id,
+    req.user.id,
     {
-      account,
-      password,
       screenName,
       avatar,
       gender,
@@ -18,7 +23,7 @@ exports.updateUser = catchAsync(async (req, res, next) => {
   );
 
   if (!editedUser) {
-    next(new AppError("查無此使用者", httpStatusCodes.NOT_FOUND));
+    return next(new AppError("查無此使用者", httpStatusCodes.NOT_FOUND));
   }
 
   res.status(httpStatusCodes.OK).send({

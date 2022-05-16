@@ -34,7 +34,6 @@ app.use("/api/v1/posts", postsRouter);
 app.use("/api/v1/users", usersRouter);
 
 app.all("*", (req, res, next) => {
-  console.log("into app.all callback function");
   next(
     new AppError(
       `Can't find ${req.originalUrl} on this server`,

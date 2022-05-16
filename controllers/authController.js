@@ -1,3 +1,4 @@
+const { promisify } = require("util");
 const jwt = require("jsonwebtoken");
 const User = require("../models/userModel");
 const AppError = require("../utility/appError");
@@ -39,15 +40,46 @@ exports.signup = catchAsync(async (req, res, next) => {
 exports.login = catchAsync(async (req, res, next) => {
   const { email, password } = req.body;
 
-  if (!email || !password)
+  if (!email || !password) {
     return next(new AppError("請輸入信箱或密碼", httpStatusCodes.BAD_REQUEST));
+  }
 
   const foundUser = await User.findOne({ email }).select("+password");
   if (
     !foundUser ||
     !(await foundUser.isCorrectPassword(password, foundUser.password))
-  )
+  ) {
     return next(new AppError("帳號或密碼錯誤", httpStatusCodes.UNAUTHORIZED));
+  }
 
   await createAndSendToken(foundUser, httpStatusCodes.OK, res);
+});
+
+// 登入檢查
+exports.protect = catchAsync(async (req, res, next) => {
+  let token;
+  // 檢查是否有 token
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith("Bearer")
+  ) {
+    token = req.headers.authorization.split(" ")[1];
+  }
+
+  if (!token) {
+    return next(new AppError("請先登入", httpStatusCodes.UNAUTHORIZED));
+  }
+
+  // 檢查 token 有效性與解碼
+  const decode = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
+  console.log("decode :>> ", decode);
+
+  // 找出該憑證使用者
+  const foundUser = await User.findById(decode.id);
+  if (!foundUser) {
+    return next(new AppError("使用者已不存在", httpStatusCodes.UNAUTHORIZED));
+  }
+
+  req.user = foundUser;
+  next();
 });
