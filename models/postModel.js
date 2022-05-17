@@ -16,13 +16,13 @@ const postSchema = new mongoose.Schema(
     },
     status: {
       type: Number,
-      enum: ["0", "1", "9"], // 0: original, 1: edited, 9: editing
-      default: "0",
+      enum: [0, 1, 2], // 0: original, 1: edited, 2: editing
+      default: 0,
     },
     validity: {
       type: Number,
-      enum: ["0", "1", "9"], // 0: invalid, 1: valid, 9: lock
-      default: "1",
+      enum: [0, 1, 0], // 0: invalid, 1: valid, 9: lock
+      default: 1,
     },
     comments: {
       type: [mongoose.Schema.Types.ObjectId],
