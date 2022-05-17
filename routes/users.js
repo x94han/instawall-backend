@@ -9,6 +9,8 @@ router.post("/login", authCtrl.login);
 router.get("/profile", authCtrl.protect, usersCtrl.getProfile);
 router.patch("/profile", authCtrl.protect, usersCtrl.updateProfile);
 
+router.patch("/updatePassword", authCtrl.protect, authCtrl.updatePassword);
+
 router.route("/").get(usersCtrl.getAllUsers);
 // router.route("/:id").get(usersCtrl.getUser);
 

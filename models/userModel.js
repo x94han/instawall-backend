@@ -54,6 +54,7 @@ const userSchema = new mongoose.Schema(
   { timestamps: { createdAt: true, updatedAt: false }, versionKey: false }
 );
 
+// 密碼如有變更，則先加密
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
 
@@ -63,6 +64,7 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
+// 比較兩組密碼是否一致
 userSchema.methods.isCorrectPassword = async function (password, DBPassword) {
   return await bcrypt.compare(password, DBPassword);
 };

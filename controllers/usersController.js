@@ -3,6 +3,7 @@ const AppError = require("../utility/appError");
 const httpStatusCodes = require("../utility/httpStatusCodes");
 const catchAsync = require("../utility/catchAsync");
 
+// 取得登入者資料
 exports.getProfile = catchAsync(async (req, res, next) => {
   res.status(httpStatusCodes.OK).send({
     status: "success",
@@ -10,6 +11,7 @@ exports.getProfile = catchAsync(async (req, res, next) => {
   });
 });
 
+// 修改登入者資料
 exports.updateProfile = catchAsync(async (req, res, next) => {
   const { screenName, avatar, gender } = req.body;
   const editedUser = await User.findByIdAndUpdate(

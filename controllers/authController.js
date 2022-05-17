@@ -55,7 +55,7 @@ exports.login = catchAsync(async (req, res, next) => {
   await createAndSendToken(foundUser, httpStatusCodes.OK, res);
 });
 
-// 登入檢查
+// 阻擋不合格 token
 exports.protect = catchAsync(async (req, res, next) => {
   let token;
   // 檢查是否有 token
@@ -72,7 +72,6 @@ exports.protect = catchAsync(async (req, res, next) => {
 
   // 檢查 token 有效性與解碼
   const decode = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
-  console.log("decode :>> ", decode);
 
   // 找出該憑證使用者
   const foundUser = await User.findById(decode.id);
@@ -82,4 +81,24 @@ exports.protect = catchAsync(async (req, res, next) => {
 
   req.user = foundUser;
   next();
+});
+
+// 更新密碼
+exports.updatePassword = catchAsync(async (req, res, next) => {
+  const { currentPassword, password, passwordConfirm } = req.body;
+
+  const foundUser = await User.findById(req.user.id).select("+password");
+
+  // 檢查密碼是否正確
+  if (!foundUser.isCorrectPassword(currentPassword, foundUser.password)) {
+    return next(new AppError("密碼不正確", httpStatusCodes.UNAUTHORIZED));
+  }
+
+  // 更新密碼
+  foundUser.password = password;
+  foundUser.passwordConfirm = passwordConfirm;
+  await foundUser.save();
+
+  // 更新 JWT
+  await createAndSendToken(foundUser, httpStatusCodes.OK, res);
 });
