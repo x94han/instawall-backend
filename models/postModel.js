@@ -21,7 +21,7 @@ const postSchema = new mongoose.Schema(
     },
     validity: {
       type: Number,
-      enum: [0, 1, 0], // 0: invalid, 1: valid, 9: lock
+      enum: [0, 1, 2], // 0: invalid, 1: valid, 2: locked
       default: 1,
     },
     comments: {
