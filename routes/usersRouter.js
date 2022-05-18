@@ -6,8 +6,10 @@ const router = express.Router();
 router.post("/signup", authCtrl.signup);
 router.post("/login", authCtrl.login);
 
-router.get("/profile", authCtrl.protect, usersCtrl.getProfile);
-router.patch("/profile", authCtrl.protect, usersCtrl.updateProfile);
+router
+  .route("/profile")
+  .get([authCtrl.protect, usersCtrl.getProfile])
+  .patch([authCtrl.protect, usersCtrl.updateProfile]);
 
 router.patch("/updatePassword", authCtrl.protect, authCtrl.updatePassword);
 

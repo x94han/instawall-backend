@@ -6,8 +6,8 @@ const httpStatusCodes = require("./utility/httpStatusCodes");
 const errorHandle = require("./utility/errorHandle");
 const AppError = require("./utility/appError");
 const indexRouter = require("./routes/index");
-const postsRouter = require("./routes/posts");
-const usersRouter = require("./routes/users");
+const postsRouter = require("./routes/postsRouter");
+const usersRouter = require("./routes/usersRouter");
 const { Server } = require("http");
 
 process.on("uncaughtException", (err) => {
