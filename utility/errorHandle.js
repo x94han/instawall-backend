@@ -53,12 +53,15 @@ const errorHandle = (err, req, res, next) => {
       case "TokenExpiredError":
         copiedErr = new AppError(
           `登入憑證過期，請重新登入`,
-          httpStatusCodes.BAD_REQUEST
+          httpStatusCodes.FORBIDDEN
         );
         break;
 
       case "JsonWebTokenError":
-        copiedErr = new AppError(`登入憑證錯誤！`, httpStatusCodes.BAD_REQUEST);
+        copiedErr = new AppError(
+          `登入憑證錯誤！`,
+          httpStatusCodes.UNAUTHORIZED
+        );
         break;
     }
     sendErrorProd(copiedErr, res);
