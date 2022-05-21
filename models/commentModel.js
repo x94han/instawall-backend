@@ -3,49 +3,46 @@ const mongoose = require("mongoose");
 const commentSchema = new mongoose.Schema(
   {
     postId: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Post",
       required: [true, "PostId is required."],
     },
-    type: {
-      type: Number,
-      enum: [0, 1], // 0: comment, 1: reply
-      required: [true, "Type is required."],
-    },
     author: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
       required: [true, "UserId is required."],
     },
     content: {
       type: String,
       required: [true, "Content is required."],
     },
-    images: {
-      type: [String],
-    },
     status: {
+      // 0: original, 1: edited, 2: editing, 3: locked, 4: ban
       type: Number,
-      enum: [0, 1, 9], // 0: original, 1: edited, 9: editing
+      min: 0,
+      max: 4,
       default: 0,
     },
-    validity: {
-      type: Number,
-      enum: [0, 1, 9], // 0: invalid, 1: valid, 9: lock
-      default: 1,
+    active: {
+      type: Boolean,
+      default: true,
     },
-    replyTo: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Comment",
-    },
-    userUpdateAt: {
+    userUpdatedAt: {
       type: Date,
     },
-    like: {
-      type: [mongoose.Schema.Types.ObjectId],
-      ref: "User",
+    createdAt: {
+      type: Date,
+      default: Date.now,
+      select: false,
     },
   },
-  { timestamps: { createdAt: true, updatedAt: false }, versionKey: false }
+  { versionKey: false }
 );
+
+userSchema.pre(/^find/, async function (next) {
+  this.find({ active: true });
+  next();
+});
 
 const Comment = new mongoose.model("Comment", commentSchema);
 

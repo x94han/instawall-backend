@@ -15,29 +15,46 @@ const postSchema = new mongoose.Schema(
       type: [String],
     },
     status: {
+      // 0: original, 1: edited, 2: editing, 3: locked, 4: ban
       type: Number,
-      enum: [0, 1, 2], // 0: original, 1: edited, 2: editing
+      min: 0,
+      max: 4,
       default: 0,
     },
-    validity: {
-      type: Number,
-      enum: [0, 1, 2], // 0: invalid, 1: valid, 2: locked
-      default: 1,
+    active: {
+      type: Boolean,
+      default: true,
     },
-    comments: {
-      type: [mongoose.Schema.Types.ObjectId],
-      ref: "Comment",
-    },
-    userUpdateAt: {
+    userUpdatedAt: {
       type: Date,
     },
-    like: {
+    likes: {
       type: [mongoose.Schema.Types.ObjectId],
       ref: "User",
     },
+    createdAt: {
+      type: Date,
+      default: Date.now,
+      select: false,
+    },
   },
-  { timestamps: { createdAt: true, updatedAt: false }, versionKey: false }
+  { versionKey: false }
 );
+
+postSchema.virtual("comments", {
+  ref: "Comment",
+  localField: "_id",
+  foreignField: "Post",
+});
+
+postSchema.pre(/^find/, async function (next) {
+  this.find({ active: true });
+  this.populate({
+    path: "author",
+    select: "screenName avatar id createdAt",
+  });
+  next();
+});
 
 const Post = new mongoose.model("Post", postSchema);
 

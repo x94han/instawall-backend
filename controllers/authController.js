@@ -76,7 +76,9 @@ exports.protect = catchAsync(async (req, res, next) => {
   // 找出該憑證使用者
   const foundUser = await User.findById(decode.id);
   if (!foundUser) {
-    return next(new AppError("使用者已不存在", httpStatusCodes.UNAUTHORIZED));
+    return next(
+      new AppError("登入憑證有問題，請重新登入", httpStatusCodes.UNAUTHORIZED)
+    );
   }
 
   req.user = foundUser;

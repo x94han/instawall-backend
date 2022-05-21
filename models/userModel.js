@@ -21,12 +21,23 @@ const userSchema = new mongoose.Schema(
     },
     password: {
       type: String,
+      trim: true,
       required: [true, "Password is required."],
       minlength: 8,
+      validate: {
+        validator: function (el) {
+          return !validator.isStrongPassword(el, {
+            minNumbers: 1,
+            minSymbols: 1,
+          });
+        },
+        message: "密碼需8碼以上且數字與英文或符號混合!",
+      },
       select: false,
     },
     passwordConfirm: {
       type: String,
+      trim: true,
       required: [true, "Please confirm your password."],
       validate: {
         validator: function (el) {
@@ -50,8 +61,17 @@ const userSchema = new mongoose.Schema(
       enum: [0, 1, 2, 3],
       default: 0,
     },
+    active: {
+      type: Boolean,
+      default: true,
+    },
+    createdAt: {
+      type: Date,
+      default: Date.now,
+      select: false,
+    },
   },
-  { timestamps: { createdAt: true, updatedAt: false }, versionKey: false }
+  { versionKey: false }
 );
 
 // 密碼如有變更，則先加密
@@ -61,6 +81,11 @@ userSchema.pre("save", async function (next) {
   this.password = await bcrypt.hash(this.password, 12);
 
   this.passwordConfirm = undefined;
+  next();
+});
+
+userSchema.pre(/^find/, async function (next) {
+  this.find({ active: true });
   next();
 });
 
