@@ -2,6 +2,7 @@ const Post = require("../models/postModel");
 const AppError = require("../utility/appError");
 const httpStatusCodes = require("../utility/httpStatusCodes");
 const catchAsync = require("../utility/catchAsync");
+const filterObject = require("../utility/filterObject");
 
 exports.addNewPost = catchAsync(async (req, res, next) => {
   const { author, content, images } = req.body;
@@ -23,12 +24,41 @@ exports.addNewPost = catchAsync(async (req, res, next) => {
 });
 
 exports.getAllPosts = catchAsync(async (req, res, next) => {
-  const posts = await Post.find().populate({
-    path: "author",
-    select: "screenName avatar",
-  });
+  const posts = await Post.find();
+
   res.status(httpStatusCodes.OK).send({
     status: "success",
     data: posts,
+  });
+});
+
+exports.editPost = catchAsync(async (req, res, next) => {
+  const foundPost = await Post.findById(req.params.id);
+
+  if (!foundPost) {
+    return next(new AppError("查無此貼文", httpStatusCodes.NOT_FOUND));
+  }
+
+  if (!req.user._id.equals(foundPost.author._id)) {
+    return next(new AppError("您沒有編輯權限", httpStatusCodes.UNAUTHORIZED));
+  }
+
+  // 檢查並限制可編輯的欄位
+  const allowFields = ["content", "images"];
+  const filteredBody = filterObject(req.body, allowFields);
+  const bodyKeys = Object.keys(filteredBody);
+
+  if (bodyKeys.length === 0) {
+    return next(new AppError("欄位未填寫", httpStatusCodes.UNAUTHORIZED));
+  }
+
+  bodyKeys.forEach((key) => {
+    foundPost[key] = filteredBody[key];
+  });
+  const editedPost = await foundPost.save();
+
+  res.status(httpStatusCodes.OK).send({
+    status: "success",
+    data: editedPost,
   });
 });

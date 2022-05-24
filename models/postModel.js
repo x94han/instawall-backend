@@ -51,7 +51,7 @@ postSchema.pre(/^find/, async function (next) {
   this.find({ active: true });
   this.populate({
     path: "author",
-    select: "screenName avatar id createdAt",
+    select: "screenName images createdAt",
   });
   next();
 });

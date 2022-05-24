@@ -8,4 +8,6 @@ router
   .get([authCtrl.protect, postsCtrl.getAllPosts])
   .post([authCtrl.protect, postsCtrl.addNewPost]);
 
+router.route("/:id").patch([authCtrl.protect, postsCtrl.editPost]);
+
 module.exports = router;
