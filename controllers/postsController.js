@@ -77,8 +77,22 @@ exports.deletePost = catchAsync(async (req, res, next) => {
   foundPost.active = false;
   await foundPost.save();
 
-  res.status(httpStatusCodes.NO_CONTENT).send({
+  res.status(httpStatusCodes.NO_CONTENT).send();
+});
+
+// 刪除登入者所有貼文
+exports.deleteAllPosts = catchAsync(async (req, res, next) => {
+  const updatedRes = await Post.updateMany(
+    { author: req.user._id },
+    { active: true }
+  );
+
+  if (!updatedRes.acknowledged) {
+    return next(new AppError("發生錯誤", httpStatusCodes.BAD_REQUEST));
+  }
+
+  res.status(httpStatusCodes.OK).send({
     status: "success",
-    data: null,
+    data: updatedRes,
   });
 });

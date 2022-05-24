@@ -6,7 +6,8 @@ const router = express.Router();
 router
   .route("/")
   .get([authCtrl.protect, postsCtrl.getAllPosts])
-  .post([authCtrl.protect, postsCtrl.addNewPost]);
+  .post([authCtrl.protect, postsCtrl.addNewPost])
+  .delete([authCtrl.protect, postsCtrl.deleteAllPosts]);
 
 router
   .route("/:id")
