@@ -40,7 +40,7 @@ exports.editPost = catchAsync(async (req, res, next) => {
   }
 
   if (!req.user._id.equals(foundPost.author._id)) {
-    return next(new AppError("您沒有編輯權限", httpStatusCodes.UNAUTHORIZED));
+    return next(new AppError("您沒有操作權限", httpStatusCodes.UNAUTHORIZED));
   }
 
   // 檢查並限制可編輯的欄位
@@ -60,5 +60,25 @@ exports.editPost = catchAsync(async (req, res, next) => {
   res.status(httpStatusCodes.OK).send({
     status: "success",
     data: editedPost,
+  });
+});
+
+exports.deletePost = catchAsync(async (req, res, next) => {
+  const foundPost = await Post.findById(req.params.id);
+
+  if (!foundPost) {
+    return next(new AppError("查無此貼文", httpStatusCodes.NOT_FOUND));
+  }
+
+  if (!req.user._id.equals(foundPost.author._id)) {
+    return next(new AppError("您沒有操作權限", httpStatusCodes.UNAUTHORIZED));
+  }
+
+  foundPost.active = false;
+  await foundPost.save();
+
+  res.status(httpStatusCodes.NO_CONTENT).send({
+    status: "success",
+    data: null,
   });
 });

@@ -8,6 +8,9 @@ router
   .get([authCtrl.protect, postsCtrl.getAllPosts])
   .post([authCtrl.protect, postsCtrl.addNewPost]);
 
-router.route("/:id").patch([authCtrl.protect, postsCtrl.editPost]);
+router
+  .route("/:id")
+  .patch([authCtrl.protect, postsCtrl.editPost])
+  .delete([authCtrl.protect, postsCtrl.deletePost]);
 
 module.exports = router;
