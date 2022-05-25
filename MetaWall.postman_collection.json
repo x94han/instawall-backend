@@ -2,7 +2,8 @@
 	"info": {
 		"_postman_id": "a6c64f72-d485-45dd-90f4-8f1323488808",
 		"name": "MetaWall",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "20051894"
 	},
 	"item": [
 		{
@@ -24,7 +25,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{base_url}}/api/v1/posts",
+							"raw": "{{base_url}}/api/v1/posts?author=628889e4b73d59ca8bd0dd97&sort=-createdAt&fields=-active",
 							"host": [
 								"{{base_url}}"
 							],
@@ -32,6 +33,20 @@
 								"api",
 								"v1",
 								"posts"
+							],
+							"query": [
+								{
+									"key": "author",
+									"value": "628889e4b73d59ca8bd0dd97"
+								},
+								{
+									"key": "sort",
+									"value": "-createdAt"
+								},
+								{
+									"key": "fields",
+									"value": "-active"
+								}
 							]
 						}
 					},
@@ -54,7 +69,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"author\": \"62831217ec9ff0367b1f2b6f\",\r\n    \"content\": \"【 #解除豪雨特報 】\\n由於降雨趨於緩和，發生大雨或豪雨的機率降低，故解除豪雨特報。\"\r\n}",
+							"raw": "{\r\n    \"author\": \"62886df95c2ed65447f0d2d3\",\r\n    \"content\": \"我是廢文111111111111\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -70,6 +85,75 @@
 								"api",
 								"v1",
 								"posts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Edit Post",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \"content\": \"anyone 我是廢文 anyone 我是廢文 anyone 我是廢文 我是廢文\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/posts/628dadbfb79703564ece03f7",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"posts",
+								"628dadbfb79703564ece03f7"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Post Copy",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/posts/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"posts",
+								""
 							]
 						}
 					},
@@ -191,7 +275,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"email\": \"weather@metawall.com\",\r\n    \"password\": \"password\",\r\n    \"passwordConfirm\": \"password\",\r\n    \"screenName\": \"報天氣\"\r\n}   ",
+							"raw": "{\r\n    \"email\": \"weather@metawall.com\",\r\n    \"password\": \"password123\",\r\n    \"passwordConfirm\": \"password123\",\r\n    \"screenName\": \"報天氣\"\r\n}   ",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -234,7 +318,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"email\": \"weather@metawall.com\",\r\n    \"password\": \"password\"\r\n}   ",
+							"raw": "{\r\n    \"email\": \"weather@metawall.com\",\r\n    \"password\": \"password123\"\r\n}   ",
 							"options": {
 								"raw": {
 									"language": "json"
