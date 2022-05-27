@@ -62,6 +62,7 @@ exports.editPost = catchAsync(async (req, res, next) => {
   bodyKeys.forEach((key) => {
     foundPost[key] = filteredBody[key];
   });
+
   const editedPost = await foundPost.save();
 
   res.status(httpStatusCodes.OK).send({
@@ -91,7 +92,7 @@ exports.deletePost = catchAsync(async (req, res, next) => {
 exports.deleteAllPosts = catchAsync(async (req, res, next) => {
   const updatedRes = await Post.updateMany(
     { author: req.user._id },
-    { active: true }
+    { active: false }
   );
 
   if (!updatedRes.acknowledged) {
