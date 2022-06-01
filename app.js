@@ -8,6 +8,7 @@ const AppError = require("./utility/appError");
 const indexRouter = require("./routes/index");
 const postsRouter = require("./routes/postsRouter");
 const usersRouter = require("./routes/usersRouter");
+const uploadRouter = require("./routes/uploadRouter");
 const { Server } = require("http");
 
 process.on("uncaughtException", (err) => {
@@ -32,6 +33,7 @@ if (process.env.NODE_ENV === "development") app.use(logger("dev"));
 app.use("/", indexRouter);
 app.use("/api/v1/posts", postsRouter);
 app.use("/api/v1/users", usersRouter);
+app.use("/api/v1/upload", uploadRouter);
 
 app.all("*", (req, res, next) => {
   next(

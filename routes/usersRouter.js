@@ -14,6 +14,5 @@ router
 router.patch("/updatePassword", authCtrl.protect, authCtrl.updatePassword);
 
 router.route("/").get(usersCtrl.getAllUsers);
-// router.route("/:id").get(usersCtrl.getUser);
 
 module.exports = router;
