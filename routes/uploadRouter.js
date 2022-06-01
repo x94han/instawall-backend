@@ -7,7 +7,14 @@ router.post(
   "/avatar",
   authCtrl.protect,
   uploadCtrl.checkAvatar,
-  uploadCtrl.uploadAvatar
+  uploadCtrl.getImgurUrl
+);
+
+router.post(
+  "/image",
+  authCtrl.protect,
+  uploadCtrl.checkImage,
+  uploadCtrl.getImgurUrl
 );
 
 module.exports = router;

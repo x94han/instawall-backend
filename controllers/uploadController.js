@@ -6,31 +6,10 @@ const AppError = require("../utility/appError");
 const httpStatusCodes = require("../utility/httpStatusCodes");
 const catchAsync = require("../utility/catchAsync");
 
-const getImgurUrl = async (req, next) => {
-  const client = new ImgurClient({
-    clientId: process.env.IMGUR_CLIENT_ID,
-    clientSecret: process.env.IMGUR_CLIENT_SECRET,
-    refreshToken: process.env.IMGUR_REFRESH_TOKEN,
-  });
-
-  const response = await client.upload({
-    image: req.file.buffer.toString("base64"),
-    type: "base64",
-    album: process.env.IMGUR_ALBUM_ID,
-  });
-
-  if (!response.success) {
-    return next(new AppError(response.data, response.status));
-  }
-
-  return response.data.link;
-};
-
-exports.checkAvatar = (req, res, next) => {
-  // set multer(opts)
-  const limits = { fileSize: 2 * 1024 * 1024 }; // 2 MB
-  const fileFilter = (req, file, cb) => {
-    const fileTypes = "jpg|png|gif";
+const multerOptions = {
+  fileSize: 1 * 1024 * 1024, // 1 MB
+  fileFilter: (req, file, cb) => {
+    const fileTypes = "jpg|png";
     const extname = path.extname(file.originalname).toLowerCase();
     if (new RegExp(fileTypes).test(extname)) {
       cb(null, true);
@@ -42,10 +21,11 @@ exports.checkAvatar = (req, res, next) => {
         )
       );
     }
-  };
-  const upload = multer({ limits, fileFilter }).single("avatar");
+  },
+};
 
-  // 上傳檔案
+exports.checkAvatar = (req, res, next) => {
+  const upload = multer(multerOptions).single("image");
   upload(req, res, async (err) => {
     if (err) {
       return next(err);
@@ -69,12 +49,42 @@ exports.checkAvatar = (req, res, next) => {
   });
 };
 
-exports.uploadAvatar = catchAsync(async (req, res, next) => {
-  const link = await getImgurUrl(req, next);
+exports.checkImage = (req, res, next) => {
+  const upload = multer(multerOptions).single("image");
+  upload(req, res, async (err) => {
+    if (err) {
+      return next(err);
+    }
+
+    if (!req.file) {
+      return next(new AppError(`請上傳檔案`, httpStatusCodes.BAD_REQUEST));
+    }
+
+    next();
+  });
+};
+
+exports.getImgurUrl = catchAsync(async (req, res, next) => {
+  const client = new ImgurClient({
+    clientId: process.env.IMGUR_CLIENT_ID,
+    clientSecret: process.env.IMGUR_CLIENT_SECRET,
+    refreshToken: process.env.IMGUR_REFRESH_TOKEN,
+  });
+
+  const response = await client.upload({
+    image: req.file.buffer.toString("base64"),
+    type: "base64",
+    album: process.env.IMGUR_ALBUM_ID,
+  });
+
+  if (!response.success) {
+    return next(new AppError(response.data, response.status));
+  }
+
   res.status(httpStatusCodes.OK).send({
     status: "success",
     data: {
-      link,
+      link: response.data.link,
     },
   });
 });

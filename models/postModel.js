@@ -11,22 +11,12 @@ const postSchema = new mongoose.Schema(
       type: String,
       required: [true, "Content is required."],
     },
-    images: {
-      type: [String],
-    },
-    status: {
-      // 0: original, 1: edited, 2: editing, 3: locked, 4: ban
-      type: Number,
-      min: 0,
-      max: 4,
-      default: 0,
+    image: {
+      type: String,
     },
     active: {
       type: Boolean,
       default: true,
-    },
-    userUpdatedAt: {
-      type: Date,
     },
     likes: {
       type: [mongoose.Schema.Types.ObjectId],
