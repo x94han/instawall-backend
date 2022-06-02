@@ -17,7 +17,7 @@ const userSchema = new mongoose.Schema(
       trim: true,
       required: [true, "Email is required."],
       unique: true,
-      validate: [validator.isEmail, "請輸入有效的 Email"],
+      validate: [validator.isEmail, "Please provide a valid email."],
     },
     password: {
       type: String,
@@ -26,19 +26,16 @@ const userSchema = new mongoose.Schema(
       minlength: 8,
       validate: {
         validator: function (el) {
-          return !validator.isStrongPassword(el, {
-            minNumbers: 1,
-            minSymbols: 1,
-          });
+          return !validator.isNumeric(el) && !validator.isAlpha(el);
         },
-        message: "密碼需8碼以上且數字與英文或符號混合",
+        message: "密碼需數字與英文或符號混合",
       },
       select: false,
     },
     passwordConfirm: {
       type: String,
       trim: true,
-      required: [true, "PasswordConfirm is required."],
+      required: [true, "Please confirm your password."],
       validate: {
         validator: function (el) {
           return el === this.password;
