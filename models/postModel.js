@@ -9,10 +9,21 @@ const postSchema = new mongoose.Schema(
     },
     content: {
       type: String,
-      required: [true, "Content is required."],
+      required: [
+        function () {
+          return !this.image;
+        },
+        "Either content or image is required",
+      ],
     },
     image: {
       type: String,
+      required: [
+        function () {
+          return !this.content;
+        },
+        "Either content or image is required",
+      ],
     },
     active: {
       type: Boolean,

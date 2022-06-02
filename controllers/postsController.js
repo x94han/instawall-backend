@@ -6,17 +6,14 @@ const catchAsync = require("../utility/catchAsync");
 const filterObject = require("../utility/filterObject");
 
 exports.addNewPost = catchAsync(async (req, res, next) => {
-  const { author, content, images } = req.body;
+  const allowFields = ["author", "content", "image"];
+  const filteredBody = filterObject(req.body, allowFields);
 
-  if (!author || !content) {
-    next(new AppError("欄位填寫不正確", httpStatusCodes.BAD_REQUEST));
+  if (Object.keys(filteredBody).length === 0) {
+    return next(new AppError("欄位未填寫", httpStatusCodes.BAD_REQUEST));
   }
 
-  const newPost = await Post.create({
-    author,
-    content,
-    images,
-  });
+  const newPost = await Post.create(filteredBody);
 
   res.status(httpStatusCodes.CREATED).send({
     status: "success",
@@ -50,8 +47,7 @@ exports.editPost = catchAsync(async (req, res, next) => {
     return next(new AppError("您沒有操作權限", httpStatusCodes.UNAUTHORIZED));
   }
 
-  // 檢查並限制可編輯的欄位
-  const allowFields = ["content", "images"];
+  const allowFields = ["content", "image"];
   const filteredBody = filterObject(req.body, allowFields);
   const bodyKeys = Object.keys(filteredBody);
 
