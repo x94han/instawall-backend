@@ -69,7 +69,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"author\": \"62886df95c2ed65447f0d2d3\",\r\n    \"content\": \"我是廢文111111111111\"\r\n}",
+							"raw": "{\r\n    \"author\": \"62886df95c2ed65447f0d2d3\",\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -130,7 +130,7 @@
 					"response": []
 				},
 				{
-					"name": "Delete Post Copy",
+					"name": "Delete Post",
 					"request": {
 						"auth": {
 							"type": "bearer",
@@ -275,7 +275,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"email\": \"weather@metawall.com\",\r\n    \"password\": \"password123\",\r\n    \"passwordConfirm\": \"password123\",\r\n    \"screenName\": \"報天氣\"\r\n}   ",
+							"raw": "{\r\n    \"email\": \"test@metawall.com\",\r\n    \"password\": \"passwor3\",\r\n    \"passwordConfirm\": \"password123\",\r\n    \"screenName\": \"測\"\r\n}   ",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -385,6 +385,115 @@
 								"v1",
 								"users",
 								"updatePassword"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Upload",
+			"item": [
+				{
+					"name": "Upload Avatar",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "image",
+									"type": "file",
+									"src": "/C:/Users/User/OneDrive/圖片/3865_01649469533.jpg"
+								},
+								{
+									"key": "image",
+									"type": "file",
+									"src": "/C:/Users/User/OneDrive/圖片/111年辦公日曆表.pdf",
+									"disabled": true
+								},
+								{
+									"key": "test",
+									"type": "file",
+									"src": "/C:/Users/User/OneDrive/圖片/list index.png",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/upload/avatar",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"upload",
+								"avatar"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Upload Image",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "image",
+									"type": "file",
+									"src": "/C:/Users/User/OneDrive/圖片/海綿寶寶頭.png"
+								},
+								{
+									"key": "image",
+									"type": "file",
+									"src": "/C:/Users/User/OneDrive/圖片/111年辦公日曆表.pdf",
+									"disabled": true
+								},
+								{
+									"key": "test",
+									"type": "file",
+									"src": "/C:/Users/User/OneDrive/圖片/list index.png",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/upload/image",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"upload",
+								"image"
 							]
 						}
 					},
