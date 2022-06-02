@@ -17,7 +17,7 @@ const userSchema = new mongoose.Schema(
       trim: true,
       required: [true, "Email is required."],
       unique: true,
-      validate: [validator.isEmail, "Please provide a valid email."],
+      validate: [validator.isEmail, "請輸入有效的 Email"],
     },
     password: {
       type: String,
@@ -31,19 +31,19 @@ const userSchema = new mongoose.Schema(
             minSymbols: 1,
           });
         },
-        message: "密碼需8碼以上且數字與英文或符號混合!",
+        message: "密碼需8碼以上且數字與英文或符號混合",
       },
       select: false,
     },
     passwordConfirm: {
       type: String,
       trim: true,
-      required: [true, "Please confirm your password."],
+      required: [true, "PasswordConfirm is required."],
       validate: {
         validator: function (el) {
           return el === this.password;
         },
-        message: "Passwords are not the same!",
+        message: "密碼輸入不一致",
       },
       select: false,
     },
