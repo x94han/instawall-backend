@@ -2,6 +2,7 @@ const User = require("../models/userModel");
 const AppError = require("../utility/appError");
 const httpStatusCodes = require("../utility/httpStatusCodes");
 const catchAsync = require("../utility/catchAsync");
+const filterObject = require("../utility/filterObject");
 
 // 取得登入者資料
 exports.getProfile = catchAsync(async (req, res, next) => {
@@ -13,16 +14,17 @@ exports.getProfile = catchAsync(async (req, res, next) => {
 
 // 修改登入者資料
 exports.updateProfile = catchAsync(async (req, res, next) => {
-  const { screenName, avatar, gender } = req.body;
-  const editedUser = await User.findByIdAndUpdate(
-    req.user.id,
-    {
-      screenName,
-      avatar,
-      gender,
-    },
-    { new: true, runValidators: true }
-  );
+  const allowFields = ["screenName", "avatar", "gender"];
+  const filteredBody = filterObject(req.body, allowFields);
+
+  if (Object.keys(filteredBody).length === 0) {
+    return next(new AppError("欄位未填寫", httpStatusCodes.BAD_REQUEST));
+  }
+
+  const editedUser = await User.findByIdAndUpdate(req.user.id, filteredBody, {
+    new: true,
+    runValidators: true,
+  });
 
   if (!editedUser) {
     return next(new AppError("查無此使用者", httpStatusCodes.NOT_FOUND));

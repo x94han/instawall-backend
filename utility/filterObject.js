@@ -1,8 +1,7 @@
 /**
- *
- * @param {*} obj 要被過濾的物件
+ * @param {object} obj 要被過濾的物件
  * @param {string[]} allowKeys 要留下的 key
- * @returns 過濾後的物件
+ * @returns object 過濾後的物件
  */
 
 module.exports = (obj, allowKeys) => {
