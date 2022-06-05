@@ -62,6 +62,30 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+    followers: [
+      {
+        user: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "User",
+        },
+        createdAt: {
+          type: Date,
+          default: Date.now,
+        },
+      },
+    ],
+    following: [
+      {
+        user: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "User",
+        },
+        createdAt: {
+          type: Date,
+          default: Date.now,
+        },
+      },
+    ],
     createdAt: {
       type: Date,
       default: Date.now,
@@ -74,9 +98,7 @@ const userSchema = new mongoose.Schema(
 // 密碼如有變更，則先加密
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
-
   this.password = await bcrypt.hash(this.password, 12);
-
   this.passwordConfirm = undefined;
   next();
 });

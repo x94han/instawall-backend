@@ -45,7 +45,7 @@ exports.getLikeList = catchAsync(async (req, res, next) => {
     },
   }).populate({
     path: "likes",
-    selet: "screenName",
+    selet: "screenName", // TODO 補 avatar
   });
 
   if (!likeList) {
@@ -55,6 +55,72 @@ exports.getLikeList = catchAsync(async (req, res, next) => {
   res.status(httpStatusCodes.OK).send({
     status: "success",
     data: likeList,
+  });
+});
+
+exports.follow = catchAsync(async (req, res, next) => {
+  const follower = req.user.id;
+  const target = req.params.id;
+
+  if (follower === target) {
+    return next(new AppError("不可以追蹤自己", httpStatusCodes.BAD_REQUEST));
+  }
+
+  await User.updateOne(
+    {
+      _id: follower,
+      "following.user": { $ne: target },
+    },
+    {
+      $addToSet: {
+        following: { user: target },
+      },
+    }
+  );
+
+  await User.updateOne(
+    {
+      _id: target,
+      "followers.user": { $ne: follower },
+    },
+    {
+      $addToSet: {
+        followers: { user: follower },
+      },
+    }
+  );
+
+  res.status(httpStatusCodes.CREATED).send({
+    status: "success",
+    data: "追蹤成功",
+  });
+});
+
+exports.unfollow = catchAsync(async (req, res, next) => {
+  const follower = req.user.id;
+  const target = req.params.id;
+
+  if (follower === target) {
+    return next(
+      new AppError("沒有退自己追蹤的功能", httpStatusCodes.BAD_REQUEST)
+    );
+  }
+
+  await User.findByIdAndUpdate(follower, {
+    $pull: {
+      following: { user: target },
+    },
+  });
+
+  await User.findByIdAndUpdate(target, {
+    $pull: {
+      followers: { user: follower },
+    },
+  });
+
+  res.status(httpStatusCodes.CREATED).send({
+    status: "success",
+    data: "取消追蹤成功",
   });
 });
 

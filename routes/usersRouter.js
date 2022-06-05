@@ -14,6 +14,12 @@ router
 router.patch("/updatePassword", authCtrl.protect, authCtrl.updatePassword);
 
 router.route("/likes").get([authCtrl.protect, usersCtrl.getLikeList]);
+
+router
+  .route("/:id/follow")
+  .post([authCtrl.protect, usersCtrl.follow])
+  .delete([authCtrl.protect, usersCtrl.unfollow]);
+
 router.route("/").get(usersCtrl.getAllUsers);
 
 module.exports = router;
