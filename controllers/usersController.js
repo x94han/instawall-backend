@@ -1,4 +1,5 @@
 const User = require("../models/userModel");
+const Post = require("../models/postModel");
 const AppError = require("../utility/appError");
 const httpStatusCodes = require("../utility/httpStatusCodes");
 const catchAsync = require("../utility/catchAsync");
@@ -33,6 +34,27 @@ exports.updateProfile = catchAsync(async (req, res, next) => {
   res.status(httpStatusCodes.OK).send({
     status: "success",
     data: editedUser,
+  });
+});
+
+// 取得登入者按讚列表
+exports.getLikeList = catchAsync(async (req, res, next) => {
+  const likeList = await Post.find({
+    likes: {
+      $in: req.user._id,
+    },
+  }).populate({
+    path: "likes",
+    selet: "screenName",
+  });
+
+  if (!likeList) {
+    return next(new AppError("查無按讚資料", httpStatusCodes.NOT_FOUND));
+  }
+
+  res.status(httpStatusCodes.OK).send({
+    status: "success",
+    data: likeList,
   });
 });
 

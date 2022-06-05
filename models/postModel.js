@@ -36,7 +36,6 @@ const postSchema = new mongoose.Schema(
     createdAt: {
       type: Date,
       default: Date.now,
-      select: false,
     },
   },
   { versionKey: false }
@@ -52,7 +51,7 @@ postSchema.pre(/^find/, async function (next) {
   this.find({ active: true });
   this.populate({
     path: "author",
-    select: "screenName images createdAt",
+    select: "screenName avatar",
   });
   next();
 });

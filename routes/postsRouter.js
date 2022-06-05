@@ -14,4 +14,9 @@ router
   .patch([authCtrl.protect, postsCtrl.editPost])
   .delete([authCtrl.protect, postsCtrl.deletePost]);
 
+router
+  .route("/:id/likes")
+  .post([authCtrl.protect, postsCtrl.likePost])
+  .delete([authCtrl.protect, postsCtrl.unlikePost]);
+
 module.exports = router;

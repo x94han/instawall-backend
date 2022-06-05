@@ -84,6 +84,52 @@ exports.deletePost = catchAsync(async (req, res, next) => {
   res.status(httpStatusCodes.NO_CONTENT).send();
 });
 
+exports.likePost = catchAsync(async (req, res, next) => {
+  const newPost = await Post.findByIdAndUpdate(
+    req.params.id,
+    {
+      $addToSet: {
+        likes: req.user.id,
+      },
+    },
+    {
+      new: true,
+    }
+  );
+
+  if (!newPost) {
+    return next(new AppError("查無貼文", httpStatusCodes.NOT_FOUND));
+  }
+
+  res.status(httpStatusCodes.CREATED).send({
+    status: "success",
+    data: newPost,
+  });
+});
+
+exports.unlikePost = catchAsync(async (req, res, next) => {
+  const newPost = await Post.findByIdAndUpdate(
+    req.params.id,
+    {
+      $pull: {
+        likes: req.user.id,
+      },
+    },
+    {
+      new: true,
+    }
+  );
+
+  if (!newPost) {
+    return next(new AppError("查無貼文", httpStatusCodes.NOT_FOUND));
+  }
+
+  res.status(httpStatusCodes.CREATED).send({
+    status: "success",
+    data: newPost,
+  });
+});
+
 // 刪除登入者所有貼文
 exports.deleteAllPosts = catchAsync(async (req, res, next) => {
   const updatedRes = await Post.updateMany(

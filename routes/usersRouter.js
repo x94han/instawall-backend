@@ -13,6 +13,7 @@ router
 
 router.patch("/updatePassword", authCtrl.protect, authCtrl.updatePassword);
 
+router.route("/likes").get([authCtrl.protect, usersCtrl.getLikeList]);
 router.route("/").get(usersCtrl.getAllUsers);
 
 module.exports = router;
