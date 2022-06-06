@@ -68,6 +68,19 @@ exports.getPosts = catchAsync(async (req, res, next) => {
   });
 });
 
+// 取得登入者追蹤名單
+exports.getFollowing = catchAsync(async (req, res, next) => {
+  const foundUser = await User.findById(req.user._id).populate({
+    path: "following.user",
+    select: "screenName avatar",
+  });
+
+  res.status(httpStatusCodes.OK).send({
+    status: "success",
+    data: foundUser.following,
+  });
+});
+
 exports.follow = catchAsync(async (req, res, next) => {
   const follower = req.user.id;
   const target = req.params.id;
