@@ -14,6 +14,7 @@ router
 router.patch("/updatePassword", authCtrl.protect, authCtrl.updatePassword);
 
 router.route("/likes").get([authCtrl.protect, usersCtrl.getLikeList]);
+router.route("/posts").get([authCtrl.protect, usersCtrl.getPosts]);
 
 router
   .route("/:id/follow")

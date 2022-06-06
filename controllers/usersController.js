@@ -58,6 +58,16 @@ exports.getLikeList = catchAsync(async (req, res, next) => {
   });
 });
 
+// 取得登入者所有貼文
+exports.getPosts = catchAsync(async (req, res, next) => {
+  const foundPosts = await Post.find({ user: req.user._id });
+
+  res.status(httpStatusCodes.OK).send({
+    status: "success",
+    data: foundPosts,
+  });
+});
+
 exports.follow = catchAsync(async (req, res, next) => {
   const follower = req.user.id;
   const target = req.params.id;
