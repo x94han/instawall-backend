@@ -45,7 +45,7 @@ exports.getLikeList = catchAsync(async (req, res, next) => {
     },
   }).populate({
     path: "likes",
-    selet: "screenName", // TODO 補 avatar
+    select: "screenName avatar",
   });
 
   if (!likeList) {
