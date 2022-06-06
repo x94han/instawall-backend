@@ -6,7 +6,7 @@ const httpStatusCodes = require("../utility/httpStatusCodes");
 const catchAsync = require("../utility/catchAsync");
 const filterObject = require("../utility/filterObject");
 
-exports.addNewPost = catchAsync(async (req, res, next) => {
+exports.addPost = catchAsync(async (req, res, next) => {
   const allowFields = ["user", "content", "image"];
   const filteredBody = filterObject(req.body, allowFields);
 
