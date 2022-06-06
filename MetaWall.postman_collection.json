@@ -10,7 +10,7 @@
 			"name": "Post",
 			"item": [
 				{
-					"name": "Get All Posts",
+					"name": "Get Posts Flexible",
 					"request": {
 						"auth": {
 							"type": "bearer",
@@ -25,7 +25,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{base_url}}/api/v1/posts?author=628889e4b73d59ca8bd0dd97&sort=-createdAt&fields=-active",
+							"raw": "{{base_url}}/api/v1/posts?user=629c5db540a4af0ef2f58a93",
 							"host": [
 								"{{base_url}}"
 							],
@@ -36,16 +36,26 @@
 							],
 							"query": [
 								{
-									"key": "author",
-									"value": "628889e4b73d59ca8bd0dd97"
+									"key": "user",
+									"value": "629c5db540a4af0ef2f58a93",
+									"description": "指定使用者"
+								},
+								{
+									"key": "likes.0[exists]",
+									"value": "true",
+									"description": "按讚數大於 1",
+									"disabled": true
 								},
 								{
 									"key": "sort",
-									"value": "-createdAt"
+									"value": "createdAt",
+									"description": "舊到新",
+									"disabled": true
 								},
 								{
 									"key": "fields",
-									"value": "-active"
+									"value": "-active",
+									"disabled": true
 								}
 							]
 						}
@@ -53,7 +63,43 @@
 					"response": []
 				},
 				{
-					"name": "Add New Post",
+					"name": "Get Post",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/posts/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"posts",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": null
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add Post",
 					"request": {
 						"auth": {
 							"type": "bearer",
@@ -69,7 +115,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"author\": \"62886df95c2ed65447f0d2d3\",\r\n}",
+							"raw": "{\r\n    \"user\": \"62886df95c2ed65447f0d2d3\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -85,6 +131,163 @@
 								"api",
 								"v1",
 								"posts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add Comment",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"user\": \"628889e4b73d59ca8bd0dd97\",\r\n    \"content\": \"下大雨就該去衝浪啊！\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/posts/:id/comment",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"posts",
+								":id",
+								"comment"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "6288712f679ccb72bf8ea256"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Comment",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/posts/comment/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"posts",
+								"comment",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "629d8493eb178334f15cbcca"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Like Post",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/posts/:id/likes",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"posts",
+								":id",
+								"likes"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": null
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Unlike Post",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/posts/:id/likes",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"posts",
+								":id",
+								"likes"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": null
+								}
 							]
 						}
 					},
@@ -214,6 +417,140 @@
 					"response": []
 				},
 				{
+					"name": "Get Like List",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/users/likes",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"likes"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Following",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/users/following",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"following"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Follow User",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/users/:id/follow",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								":id",
+								"follow"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "628889e4b73d59ca8bd0dd97"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Unfollow User",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/users/:id/follow",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								":id",
+								"follow"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "628889e4b73d59ca8bd0dd97"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Update Profile",
 					"request": {
 						"auth": {
@@ -275,7 +612,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"email\": \"test@metawall.com\",\r\n    \"password\": \"passwor3\",\r\n    \"passwordConfirm\": \"password123\",\r\n    \"screenName\": \"測\"\r\n}   ",
+							"raw": "{\r\n    \"email\": \"alan@metawall.com\",\r\n    \"password\": \"password123\",\r\n    \"passwordConfirm\": \"password123\",\r\n    \"screenName\": \"艾倫\"\r\n}   ",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -318,7 +655,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"email\": \"weather@metawall.com\",\r\n    \"password\": \"password123\"\r\n}   ",
+							"raw": "{\r\n    \"email\": \"anyone@metawall.com\",\r\n    \"password\": \"password123\"\r\n}   ",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -416,7 +753,7 @@
 								{
 									"key": "image",
 									"type": "file",
-									"src": "/C:/Users/User/OneDrive/圖片/3865_01649469533.jpg"
+									"src": "/C:/Users/User/OneDrive/圖片/alan.jpg"
 								},
 								{
 									"key": "image",
