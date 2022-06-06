@@ -1,4 +1,5 @@
 const Post = require("../models/postModel");
+const Comment = require("../models/commentModel");
 const AppError = require("../utility/appError");
 const APIFeatures = require("../utility/apiFeatures");
 const httpStatusCodes = require("../utility/httpStatusCodes");
@@ -6,7 +7,7 @@ const catchAsync = require("../utility/catchAsync");
 const filterObject = require("../utility/filterObject");
 
 exports.addNewPost = catchAsync(async (req, res, next) => {
-  const allowFields = ["author", "content", "image"];
+  const allowFields = ["user", "content", "image"];
   const filteredBody = filterObject(req.body, allowFields);
 
   if (Object.keys(filteredBody).length === 0) {
@@ -43,7 +44,7 @@ exports.editPost = catchAsync(async (req, res, next) => {
     return next(new AppError("查無此貼文", httpStatusCodes.NOT_FOUND));
   }
 
-  if (!req.user._id.equals(foundPost.author._id)) {
+  if (!req.user._id.equals(foundPost.user._id)) {
     return next(new AppError("您沒有操作權限", httpStatusCodes.UNAUTHORIZED));
   }
 
@@ -74,7 +75,7 @@ exports.deletePost = catchAsync(async (req, res, next) => {
     return next(new AppError("查無此貼文", httpStatusCodes.NOT_FOUND));
   }
 
-  if (!req.user._id.equals(foundPost.author._id)) {
+  if (!req.user._id.equals(foundPost.user._id)) {
     return next(new AppError("您沒有操作權限", httpStatusCodes.UNAUTHORIZED));
   }
 
@@ -130,10 +131,45 @@ exports.unlikePost = catchAsync(async (req, res, next) => {
   });
 });
 
+exports.addComment = catchAsync(async (req, res, next) => {
+  const allowFields = ["user", "content"];
+  const filteredBody = filterObject(req.body, allowFields);
+
+  if (Object.keys(filteredBody).length === 0) {
+    return next(new AppError("欄位未填寫", httpStatusCodes.BAD_REQUEST));
+  }
+
+  filteredBody["post"] = req.params.id;
+
+  const newComment = await Comment.create(filteredBody);
+
+  res.status(httpStatusCodes.CREATED).send({
+    status: "success",
+    data: newComment,
+  });
+});
+
+exports.deleteComment = catchAsync(async (req, res, next) => {
+  const foundComment = await Comment.findById(req.params.id);
+
+  if (!foundComment) {
+    return next(new AppError("查無此評論", httpStatusCodes.NOT_FOUND));
+  }
+
+  if (!req.user._id.equals(foundComment.user._id)) {
+    return next(new AppError("您沒有操作權限", httpStatusCodes.UNAUTHORIZED));
+  }
+
+  foundComment.active = false;
+  await foundComment.save();
+
+  res.status(httpStatusCodes.NO_CONTENT).send();
+});
+
 // 刪除登入者所有貼文
 exports.deleteAllPosts = catchAsync(async (req, res, next) => {
   const updatedRes = await Post.updateMany(
-    { author: req.user._id },
+    { user: req.user._id },
     { active: false }
   );
 

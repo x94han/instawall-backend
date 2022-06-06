@@ -2,10 +2,10 @@ const mongoose = require("mongoose");
 
 const postSchema = new mongoose.Schema(
   {
-    author: {
+    user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: [true, "Author is required."],
+      required: [true, "User is required."],
     },
     content: {
       type: String,
@@ -38,21 +38,25 @@ const postSchema = new mongoose.Schema(
       default: Date.now,
     },
   },
-  { versionKey: false }
+  {
+    versionKey: false,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
+  }
 );
 
 postSchema.virtual("comments", {
   ref: "Comment",
+  foreignField: "post",
   localField: "_id",
-  foreignField: "Post",
 });
 
 postSchema.pre(/^find/, async function (next) {
   this.find({ active: true });
   this.populate({
-    path: "author",
+    path: "user",
     select: "screenName avatar",
-  });
+  }).populate("comments");
   next();
 });
 

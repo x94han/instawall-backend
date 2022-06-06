@@ -9,14 +9,17 @@ router
   .post([authCtrl.protect, postsCtrl.addNewPost])
   .delete([authCtrl.protect, postsCtrl.deleteAllPosts]);
 
-router
-  .route("/:id")
-  .patch([authCtrl.protect, postsCtrl.editPost])
-  .delete([authCtrl.protect, postsCtrl.deletePost]);
+router.post("/:id/comment", authCtrl.protect, postsCtrl.addComment);
+router.delete("/comment/:id", authCtrl.protect, postsCtrl.deleteComment);
 
 router
   .route("/:id/likes")
   .post([authCtrl.protect, postsCtrl.likePost])
   .delete([authCtrl.protect, postsCtrl.unlikePost]);
+
+router
+  .route("/:id")
+  .patch([authCtrl.protect, postsCtrl.editPost])
+  .delete([authCtrl.protect, postsCtrl.deletePost]);
 
 module.exports = router;
