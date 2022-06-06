@@ -22,7 +22,7 @@ exports.addPost = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.getAllPosts = catchAsync(async (req, res, next) => {
+exports.getPostsFlexible = catchAsync(async (req, res, next) => {
   const features = new APIFeatures(Post.find(), req.query)
     .filter()
     .sort()

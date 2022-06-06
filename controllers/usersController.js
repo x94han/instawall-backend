@@ -58,16 +58,6 @@ exports.getLikeList = catchAsync(async (req, res, next) => {
   });
 });
 
-// 取得登入者所有貼文
-exports.getPosts = catchAsync(async (req, res, next) => {
-  const foundPosts = await Post.find({ user: req.user._id });
-
-  res.status(httpStatusCodes.OK).send({
-    status: "success",
-    data: foundPosts,
-  });
-});
-
 // 取得登入者追蹤名單
 exports.getFollowing = catchAsync(async (req, res, next) => {
   const foundUser = await User.findById(req.user._id).populate({

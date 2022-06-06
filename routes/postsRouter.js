@@ -5,10 +5,11 @@ const router = express.Router();
 
 router
   .route("/")
-  .get([authCtrl.protect, postsCtrl.getAllPosts])
+  .get([authCtrl.protect, postsCtrl.getPostsFlexible])
   .post([authCtrl.protect, postsCtrl.addPost])
   .delete([authCtrl.protect, postsCtrl.deleteAllPosts]);
 
+router.get("/user/:id", authCtrl.protect, postsCtrl.getPostsFlexible);
 router.post("/:id/comment", authCtrl.protect, postsCtrl.addComment);
 router.delete("/comment/:id", authCtrl.protect, postsCtrl.deleteComment);
 
