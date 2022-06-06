@@ -19,6 +19,7 @@ router
 
 router
   .route("/:id")
+  .get([authCtrl.protect, postsCtrl.getPost])
   .patch([authCtrl.protect, postsCtrl.editPost])
   .delete([authCtrl.protect, postsCtrl.deletePost]);
 

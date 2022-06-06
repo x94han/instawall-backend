@@ -29,11 +29,24 @@ exports.getAllPosts = catchAsync(async (req, res, next) => {
     .limitFields()
     .pagination();
 
-  const posts = await features.query;
+  const foundPosts = await features.query;
 
   res.status(httpStatusCodes.OK).send({
     status: "success",
-    data: posts,
+    data: foundPosts,
+  });
+});
+
+exports.getPost = catchAsync(async (req, res, next) => {
+  const foundPost = await Post.findById(req.params.id);
+
+  if (!foundPost) {
+    return next(new AppError("查無此貼文", httpStatusCodes.NOT_FOUND));
+  }
+
+  res.status(httpStatusCodes.OK).send({
+    status: "success",
+    data: foundPost,
   });
 });
 
