@@ -92,7 +92,9 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
   const foundUser = await User.findById(req.user.id).select("+password");
 
   // 檢查密碼是否正確
-  if (!foundUser.isCorrectPassword(currentPassword, foundUser.password)) {
+  if (
+    !(await foundUser.isCorrectPassword(currentPassword, foundUser.password))
+  ) {
     return next(new AppError("密碼不正確", httpStatusCodes.UNAUTHORIZED));
   }
 
