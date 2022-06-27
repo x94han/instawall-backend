@@ -1,5 +1,6 @@
 const express = require("express");
 const path = require("path");
+const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 const httpStatusCodes = require("./utility/httpStatusCodes");
@@ -23,6 +24,7 @@ require("./connection");
 const app = express();
 
 // 1. Middlewares
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());

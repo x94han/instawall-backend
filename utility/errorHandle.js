@@ -28,13 +28,15 @@ const errorHandle = (err, req, res, next) => {
   err.statusCode = err.statusCode || httpStatusCodes.INTERNAL_SERVER;
   err.status = err.status || "error";
 
+  let copiedErr = { ...err };
+  copiedErr.message = err.message;
+
   switch (process.env.NODE_ENV) {
     case "development":
-      sendErrorDev(err, res);
+      sendErrorDev(copiedErr, res);
       break;
 
     case "production":
-      let copiedErr = { ...err };
       switch (err.name) {
         case "CastError":
           copiedErr = new AppError(
