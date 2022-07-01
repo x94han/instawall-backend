@@ -9,21 +9,18 @@ const postSchema = new mongoose.Schema(
     },
     content: {
       type: String,
-      required: [
-        function () {
-          return !this.image;
-        },
-        "Either content or image is required",
-      ],
+      trim: true,
+      required: [true, "Content is required."],
     },
     image: {
       type: String,
-      required: [
-        function () {
-          return !this.content;
+      required: [true, "Image is required."],
+      validate: {
+        validator: function (el) {
+          return el.startsWith("http") || el.startsWith("https");
         },
-        "Either content or image is required",
-      ],
+        message: "圖片網址應為 http 或 https 開頭",
+      },
     },
     active: {
       type: Boolean,
