@@ -138,7 +138,7 @@ exports.unlikePost = catchAsync(async (req, res, next) => {
     return next(new AppError("查無貼文", httpStatusCodes.NOT_FOUND));
   }
 
-  res.status(httpStatusCodes.CREATED).send({
+  res.status(httpStatusCodes.OK).send({
     status: "success",
     data: newPost,
   });
