@@ -22,10 +22,6 @@ const postSchema = new mongoose.Schema(
         message: "圖片網址應為 http 或 https 開頭",
       },
     },
-    active: {
-      type: Boolean,
-      default: true,
-    },
     likes: {
       type: [mongoose.Schema.Types.ObjectId],
       ref: "User",
@@ -50,7 +46,6 @@ postSchema.virtual("comments", {
 });
 
 postSchema.pre(/^find/, async function (next) {
-  this.find({ active: true });
   this.populate({
     path: "user",
     select: "screenName avatar",

@@ -82,8 +82,13 @@ exports.editPost = catchAsync(async (req, res, next) => {
 });
 
 exports.deletePost = catchAsync(async (req, res, next) => {
-  const foundPost = await Post.findById(req.params.id);
+  const postId = req.params.id;
 
+  if (!postId) {
+    return next(new AppError("缺少貼文 ID", httpStatusCodes.BAD_REQUEST));
+  }
+
+  const foundPost = await Post.findById(postId);
   if (!foundPost) {
     return next(new AppError("查無此貼文", httpStatusCodes.NOT_FOUND));
   }
@@ -92,10 +97,15 @@ exports.deletePost = catchAsync(async (req, res, next) => {
     return next(new AppError("您沒有操作權限", httpStatusCodes.UNAUTHORIZED));
   }
 
-  foundPost.active = false;
-  await foundPost.save();
+  await Post.findByIdAndDelete(postId);
+  await Comment.deleteMany({ post: postId });
 
-  res.status(httpStatusCodes.NO_CONTENT).send();
+  res.status(httpStatusCodes.OK).send({
+    status: "success",
+    data: {
+      post: postId,
+    },
+  });
 });
 
 exports.likePost = catchAsync(async (req, res, next) => {
@@ -138,7 +148,7 @@ exports.unlikePost = catchAsync(async (req, res, next) => {
     return next(new AppError("查無貼文", httpStatusCodes.NOT_FOUND));
   }
 
-  res.status(httpStatusCodes.OK).send({
+  res.status(httpStatusCodes.CREATED).send({
     status: "success",
     data: newPost,
   });
@@ -181,6 +191,11 @@ exports.deleteComment = catchAsync(async (req, res, next) => {
 
 // 刪除登入者所有貼文
 exports.deleteAllPosts = catchAsync(async (req, res, next) => {
+  if (req.originalUrl === "/api/v1/posts/") {
+    this.deletePost(req, res, next);
+    return;
+  }
+
   const updatedRes = await Post.updateMany(
     { user: req.user._id },
     { active: false }
