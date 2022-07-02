@@ -173,8 +173,11 @@ exports.addComment = catchAsync(async (req, res, next) => {
 });
 
 exports.deleteComment = catchAsync(async (req, res, next) => {
-  const foundComment = await Comment.findById(req.params.id);
+  if (!req.params.id) {
+    return next(new AppError("缺少評論 ID", httpStatusCodes.BAD_REQUEST));
+  }
 
+  const foundComment = await Comment.findById(req.params.id);
   if (!foundComment) {
     return next(new AppError("查無此評論", httpStatusCodes.NOT_FOUND));
   }
@@ -183,10 +186,14 @@ exports.deleteComment = catchAsync(async (req, res, next) => {
     return next(new AppError("您沒有操作權限", httpStatusCodes.UNAUTHORIZED));
   }
 
-  foundComment.active = false;
-  await foundComment.save();
+  await Comment.findByIdAndDelete(req.params.id);
 
-  res.status(httpStatusCodes.NO_CONTENT).send();
+  res.status(httpStatusCodes.OK).send({
+    status: "success",
+    data: {
+      comment: req.params.id,
+    },
+  });
 });
 
 // 刪除登入者所有貼文

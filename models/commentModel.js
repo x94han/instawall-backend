@@ -16,10 +16,6 @@ const commentSchema = new mongoose.Schema(
       type: String,
       required: [true, "Content is required."],
     },
-    active: {
-      type: Boolean,
-      default: true,
-    },
     createdAt: {
       type: Date,
       default: Date.now,
@@ -29,7 +25,6 @@ const commentSchema = new mongoose.Schema(
 );
 
 commentSchema.pre(/^find/, async function (next) {
-  this.find({ active: true });
   this.populate({
     path: "user",
     select: "screenName avatar",
