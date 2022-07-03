@@ -7,14 +7,17 @@ const catchAsync = require("../utility/catchAsync");
 const filterObject = require("../utility/filterObject");
 
 exports.addPost = catchAsync(async (req, res, next) => {
-  const allowFields = ["user", "content", "image"];
-  const filteredBody = filterObject(req.body, allowFields);
+  const { content, image } = req.body;
 
-  if (Object.keys(filteredBody).length !== allowFields.length) {
+  if (!content || !image) {
     return next(new AppError("欄位填寫不正確", httpStatusCodes.BAD_REQUEST));
   }
 
-  const newPost = await Post.create(filteredBody);
+  const newPost = await Post.create({
+    user: req.user._id,
+    content,
+    image,
+  });
 
   res.status(httpStatusCodes.CREATED).send({
     status: "success",
