@@ -14,6 +14,7 @@ const commentSchema = new mongoose.Schema(
     },
     content: {
       type: String,
+      trim: true,
       required: [true, "Content is required."],
     },
     createdAt: {

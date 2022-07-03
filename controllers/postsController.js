@@ -11,7 +11,7 @@ exports.addPost = catchAsync(async (req, res, next) => {
   const filteredBody = filterObject(req.body, allowFields);
 
   if (Object.keys(filteredBody).length !== allowFields.length) {
-    return next(new AppError("欄位未正確填寫", httpStatusCodes.BAD_REQUEST));
+    return next(new AppError("欄位填寫不正確", httpStatusCodes.BAD_REQUEST));
   }
 
   const newPost = await Post.create(filteredBody);
@@ -66,7 +66,7 @@ exports.editPost = catchAsync(async (req, res, next) => {
   const bodyKeys = Object.keys(filteredBody);
 
   if (bodyKeys.length !== allowFields.length) {
-    return next(new AppError("欄位未正確填寫", httpStatusCodes.UNAUTHORIZED));
+    return next(new AppError("欄位填寫不正確", httpStatusCodes.UNAUTHORIZED));
   }
 
   bodyKeys.forEach((key) => {
@@ -158,8 +158,8 @@ exports.addComment = catchAsync(async (req, res, next) => {
   const allowFields = ["user", "content"];
   const filteredBody = filterObject(req.body, allowFields);
 
-  if (Object.keys(filteredBody).length === 0) {
-    return next(new AppError("欄位未填寫", httpStatusCodes.BAD_REQUEST));
+  if (Object.keys(filteredBody).length !== 2) {
+    return next(new AppError("欄位填寫不正確", httpStatusCodes.BAD_REQUEST));
   }
 
   filteredBody["post"] = req.params.id;
