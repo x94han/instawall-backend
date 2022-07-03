@@ -158,16 +158,20 @@ exports.unlikePost = catchAsync(async (req, res, next) => {
 });
 
 exports.addComment = catchAsync(async (req, res, next) => {
-  const allowFields = ["user", "content"];
-  const filteredBody = filterObject(req.body, allowFields);
-
-  if (Object.keys(filteredBody).length !== 2) {
+  const { content } = req.body;
+  if (!content) {
     return next(new AppError("欄位填寫不正確", httpStatusCodes.BAD_REQUEST));
   }
 
-  filteredBody["post"] = req.params.id;
+  if (!(await Post.exists({ _id: req.params.id }))) {
+    return next(new AppError("查無此貼文", httpStatusCodes.BAD_REQUEST));
+  }
 
-  const newComment = await Comment.create(filteredBody);
+  const newComment = await Comment.create({
+    post: req.params.id,
+    user: req.user._id,
+    content,
+  });
 
   res.status(httpStatusCodes.CREATED).send({
     status: "success",
