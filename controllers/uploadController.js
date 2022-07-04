@@ -7,7 +7,7 @@ const httpStatusCodes = require("../utility/httpStatusCodes");
 const catchAsync = require("../utility/catchAsync");
 
 const multerOptions = {
-  fileSize: 1 * 1024 * 1024, // 1 MB
+  limits: { fileSize: 1 * 1024 * 1024 }, // 1 MB
   fileFilter: (req, file, cb) => {
     const fileTypes = "jpg|png";
     const extname = path.extname(file.originalname).toLowerCase();
