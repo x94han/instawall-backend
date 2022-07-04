@@ -6,6 +6,19 @@ const AppError = require("../utility/appError");
 const httpStatusCodes = require("../utility/httpStatusCodes");
 const catchAsync = require("../utility/catchAsync");
 
+const handleMulterError = (err) => {
+  switch (err.code) {
+    case "LIMIT_UNEXPECTED_FILE":
+      return new AppError(`上傳欄位錯誤`, httpStatusCodes.BAD_REQUEST);
+
+    case "LIMIT_FILE_SIZE":
+      return new AppError(`上傳檔案大小超過 1MB`, httpStatusCodes.BAD_REQUEST);
+
+    default:
+      return err;
+  }
+};
+
 const multerOptions = {
   limits: { fileSize: 1 * 1024 * 1024 }, // 1 MB
   fileFilter: (req, file, cb) => {
@@ -28,7 +41,7 @@ exports.checkAvatar = (req, res, next) => {
   const upload = multer(multerOptions).single("image");
   upload(req, res, async (err) => {
     if (err) {
-      return next(err);
+      return next(handleMulterError(err));
     }
 
     if (!req.file) {
@@ -53,9 +66,7 @@ exports.checkImage = (req, res, next) => {
   const upload = multer(multerOptions).single("image");
   upload(req, res, async (err) => {
     if (err) {
-      if (err.code === "LIMIT_UNEXPECTED_FILE") {
-        return next(new AppError(`上傳欄位錯誤`, httpStatusCodes.BAD_REQUEST));
-      }
+      return next(handleMulterError(err));
     }
 
     if (!req.file) {
