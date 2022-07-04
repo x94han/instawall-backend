@@ -22,7 +22,7 @@ exports.updateProfile = catchAsync(async (req, res, next) => {
     return next(new AppError("欄位未填寫", httpStatusCodes.BAD_REQUEST));
   }
 
-  const editedUser = await User.findByIdAndUpdate(req.user.id, filteredBody, {
+  const editedUser = await User.findByIdAndUpdate(req.user._id, filteredBody, {
     new: true,
     runValidators: true,
   });
@@ -72,11 +72,15 @@ exports.getFollowing = catchAsync(async (req, res, next) => {
 });
 
 exports.follow = catchAsync(async (req, res, next) => {
-  const follower = req.user.id;
+  const follower = req.user._id;
   const target = req.params.id;
 
   if (follower === target) {
     return next(new AppError("不可以追蹤自己", httpStatusCodes.BAD_REQUEST));
+  }
+
+  if (!(await User.exists({ _id: target }))) {
+    return next(new AppError("查無此使用者", httpStatusCodes.BAD_REQUEST));
   }
 
   await User.updateOne(
@@ -105,18 +109,22 @@ exports.follow = catchAsync(async (req, res, next) => {
 
   res.status(httpStatusCodes.CREATED).send({
     status: "success",
-    data: "追蹤成功",
+    data: { message: "追蹤成功" },
   });
 });
 
 exports.unfollow = catchAsync(async (req, res, next) => {
-  const follower = req.user.id;
+  const follower = req.user._id;
   const target = req.params.id;
 
   if (follower === target) {
     return next(
       new AppError("沒有退自己追蹤的功能", httpStatusCodes.BAD_REQUEST)
     );
+  }
+
+  if (!(await User.exists({ _id: target }))) {
+    return next(new AppError("查無此使用者", httpStatusCodes.BAD_REQUEST));
   }
 
   await User.findByIdAndUpdate(follower, {
@@ -133,7 +141,7 @@ exports.unfollow = catchAsync(async (req, res, next) => {
 
   res.status(httpStatusCodes.CREATED).send({
     status: "success",
-    data: "取消追蹤成功",
+    data: { message: "取消追蹤成功" },
   });
 });
 
