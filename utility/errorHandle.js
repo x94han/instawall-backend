@@ -1,6 +1,10 @@
 const AppError = require("./appError");
 const httpStatusCodes = require("./httpStatusCodes");
 
+const handleSyntaxError = (err, res) => {
+  return new AppError(err.message, httpStatusCodes.BAD_REQUEST);
+};
+
 const handleCastErrorDB = (err, res) => {
   return new AppError(`${err.path} 格式錯誤`, httpStatusCodes.BAD_REQUEST);
 };
@@ -81,6 +85,10 @@ const errorHandle = (err, req, res, next) => {
 
     case "production":
       switch (err.name) {
+        case "SyntaxError":
+          copiedErr = handleSyntaxError(copiedErr, res);
+          break;
+
         case "CastError":
           copiedErr = handleCastErrorDB(copiedErr, res);
           break;
