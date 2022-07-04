@@ -1,6 +1,49 @@
 const AppError = require("./appError");
 const httpStatusCodes = require("./httpStatusCodes");
 
+const handleCastErrorDB = (err, res) => {
+  return new AppError(`${err.path} 格式錯誤`, httpStatusCodes.BAD_REQUEST);
+};
+
+const handleValidationErrorDB = (err, res) => {
+  const keys = Object.keys(err.errors);
+  const messages = keys.map((key) => `${key}: ${err.errors[key].name}`);
+  return new AppError(
+    `資料有誤 ${messages.join(", ")}`,
+    httpStatusCodes.BAD_REQUEST
+  );
+};
+
+const handleValidatorErrorDB = (err, res) => {
+  const keys = Object.keys(err.errors);
+  const messages = keys.map(
+    (key) => `${key}: ${err.errors[key].properties.message}`
+  );
+  return new AppError(
+    `資料有誤: ${messages.join(", ")}`,
+    httpStatusCodes.BAD_REQUEST
+  );
+};
+
+const handleDuplicateFieldsErrorDB = (err, res) => {
+  if (err.code === 11000) {
+    const keys = Object.keys(err.keyPattern);
+    const messages = keys.map((key) => `${key}: ${err.keyValue[key]}`);
+    return new AppError(
+      `${messages.join(", ")}資料已存在`,
+      httpStatusCodes.BAD_REQUEST
+    );
+  }
+};
+
+const handleTokenExpiredError = (err, res) => {
+  return new AppError(`登入憑證過期，請重新登入`, httpStatusCodes.FORBIDDEN);
+};
+
+const handleJsonWebTokenError = (err, res) => {
+  return new AppError(`登入憑證錯誤！`, httpStatusCodes.UNAUTHORIZED);
+};
+
 const sendErrorDev = (err, res) => {
   res.status(err.statusCode).json({
     status: err.status,
@@ -39,47 +82,27 @@ const errorHandle = (err, req, res, next) => {
     case "production":
       switch (err.name) {
         case "CastError":
-          copiedErr = new AppError(
-            `無效的 ${err.path}: ${err.value}`,
-            httpStatusCodes.BAD_REQUEST
-          );
+          copiedErr = handleCastErrorDB(copiedErr, res);
           break;
 
-        case "ValidationError": // NOTE no break intentionally
+        case "ValidationError":
+          copiedErr = handleValidationErrorDB(copiedErr, res);
+          break;
+
         case "ValidatorError":
-          const keys = Object.keys(err.errors);
-          const messages = keys.map(
-            (key) => `${key}: ${err.errors[key].properties.message}`
-          );
-          copiedErr = new AppError(
-            `資料格式有誤: ${messages.join(", ")}`,
-            httpStatusCodes.BAD_REQUEST
-          );
+          copiedErr = handleValidatorErrorDB(copiedErr, res);
           break;
 
         case "MongoServerError":
-          if (err.code === 11000) {
-            const keys = Object.keys(err.keyPattern);
-            const messages = keys.map((key) => `${key}: ${err.keyValue[key]}`);
-            copiedErr = new AppError(
-              `${messages.join(", ")}資料已存在`,
-              httpStatusCodes.BAD_REQUEST
-            );
-          }
+          copiedErr = handleDuplicateFieldsErrorDB(copiedErr, res);
           break;
 
         case "TokenExpiredError":
-          copiedErr = new AppError(
-            `登入憑證過期，請重新登入`,
-            httpStatusCodes.FORBIDDEN
-          );
+          copiedErr = handleTokenExpiredError(copiedErr, res);
           break;
 
         case "JsonWebTokenError":
-          copiedErr = new AppError(
-            `登入憑證錯誤！`,
-            httpStatusCodes.UNAUTHORIZED
-          );
+          copiedErr = handleJsonWebTokenError(copiedErr, res);
           break;
       }
 
