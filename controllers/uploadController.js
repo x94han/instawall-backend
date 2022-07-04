@@ -9,7 +9,7 @@ const catchAsync = require("../utility/catchAsync");
 const multerOptions = {
   limits: { fileSize: 1 * 1024 * 1024 }, // 1 MB
   fileFilter: (req, file, cb) => {
-    const fileTypes = "jpg|png";
+    const fileTypes = "jpg|png|jpeg";
     const extname = path.extname(file.originalname).toLowerCase();
     if (new RegExp(fileTypes).test(extname)) {
       cb(null, true);
