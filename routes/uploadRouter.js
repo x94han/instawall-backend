@@ -5,15 +5,15 @@ const router = express.Router();
 
 router.post(
   "/avatar",
-  authCtrl.protect,
   uploadCtrl.checkAvatar,
+  authCtrl.protect,
   uploadCtrl.getImgurUrl
 );
 
 router.post(
   "/image",
-  authCtrl.protect,
   uploadCtrl.checkImage,
+  authCtrl.protect,
   uploadCtrl.getImgurUrl
 );
 

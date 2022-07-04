@@ -53,7 +53,9 @@ exports.checkImage = (req, res, next) => {
   const upload = multer(multerOptions).single("image");
   upload(req, res, async (err) => {
     if (err) {
-      return next(err);
+      if (err.code === "LIMIT_UNEXPECTED_FILE") {
+        return next(new AppError(`上傳欄位錯誤`, httpStatusCodes.BAD_REQUEST));
+      }
     }
 
     if (!req.file) {
