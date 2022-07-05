@@ -39,6 +39,11 @@ const postSchema = new mongoose.Schema(
   }
 );
 
+// 取得貼文數量
+postSchema.statics.postsCount = async function (user) {
+  return this.model("Post").countDocuments({ user });
+};
+
 postSchema.virtual("comments", {
   ref: "Comment",
   foreignField: "post",

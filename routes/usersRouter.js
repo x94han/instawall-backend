@@ -13,7 +13,7 @@ router.get("/:id/followings", authCtrl.protect, followsCtrl.getFollowings);
 router.get("/:id/fans", authCtrl.protect, followsCtrl.getFans);
 
 router
-  .route("/profile")
+  .route("/:id/profile")
   .get([authCtrl.protect, usersCtrl.getProfile])
   .patch([authCtrl.protect, usersCtrl.updateProfile]);
 

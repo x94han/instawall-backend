@@ -30,7 +30,8 @@ followSchema.statics.fansCount = async function (user) {
 
 // 是否重複追蹤
 followSchema.statics.isFollowed = async function (user, following) {
-  return this.model("Follow").exists({ user, following });
+  const found = await this.model("Follow").exists({ user, following });
+  return found ? true : false;
 };
 
 const Follow = new mongoose.model("Follow", followSchema);

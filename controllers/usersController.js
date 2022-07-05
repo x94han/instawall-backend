@@ -1,15 +1,27 @@
 const User = require("../models/userModel");
 const Post = require("../models/postModel");
+const Follow = require("../models/followModel");
 const AppError = require("../utility/appError");
 const httpStatusCodes = require("../utility/httpStatusCodes");
 const catchAsync = require("../utility/catchAsync");
 const filterObject = require("../utility/filterObject");
 
-// 取得登入者資料
 exports.getProfile = catchAsync(async (req, res, next) => {
+  const user = await User.findById(req.params.id);
+  const postsCount = await Post.postsCount(req.params.id);
+  const fansCount = await Follow.fansCount(req.params.id);
+  const followingsCount = await Follow.followingsCount(req.params.id);
+  const isFollowed = await Follow.isFollowed(req.user.id, req.params.id);
+
   res.status(httpStatusCodes.OK).send({
     status: "success",
-    data: req.user,
+    data: {
+      user,
+      postsCount,
+      fansCount,
+      followingsCount,
+      isFollowed,
+    },
   });
 });
 
