@@ -13,8 +13,7 @@ const createAndSendToken = async (user, statusCode, res) => {
 
   res.status(statusCode).send({
     status: "success",
-    token,
-    data: user,
+    data: { token, user },
   });
 };
 
