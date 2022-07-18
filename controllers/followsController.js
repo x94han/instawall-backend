@@ -64,15 +64,16 @@ exports.unfollow = catchAsync(async (req, res, next) => {
 });
 
 exports.getFollowings = catchAsync(async (req, res, next) => {
-  const followings = await Follow.find({ user: req.params.id })
-    .populate({
-      path: "user",
-      select: "screenName avatar",
-    })
-    .populate({
-      path: "following",
-      select: "screenName avatar",
-    });
+  const documents = await Follow.find({ user: req.params.id }).populate({
+    path: "following",
+    select: "screenName avatar",
+  });
+  const followings = documents.map((document) => {
+    return {
+      user: document.following,
+      isFollowed: true,
+    };
+  });
 
   res.status(httpStatusCodes.OK).send({
     status: "success",
@@ -81,15 +82,22 @@ exports.getFollowings = catchAsync(async (req, res, next) => {
 });
 
 exports.getFans = catchAsync(async (req, res, next) => {
-  const fans = await Follow.find({ following: req.params.id })
-    .populate({
-      path: "user",
-      select: "screenName avatar",
+  const documents = await Follow.find({ following: req.params.id }).populate({
+    path: "user",
+    select: "screenName avatar",
+  });
+  const fans = await Promise.all(
+    documents.map(async (document) => {
+      const isFollowed = await Follow.isFollowed(
+        req.user._id,
+        document.user._id
+      );
+      return {
+        user: document.user,
+        isFollowed,
+      };
     })
-    .populate({
-      path: "following",
-      select: "screenName avatar",
-    });
+  );
 
   res.status(httpStatusCodes.OK).send({
     status: "success",
