@@ -68,12 +68,18 @@ exports.getFollowings = catchAsync(async (req, res, next) => {
     path: "following",
     select: "screenName avatar",
   });
-  const followings = documents.map((document) => {
-    return {
-      user: document.following,
-      isFollowed: true,
-    };
-  });
+  const followings = await Promise.all(
+    documents.map(async (document) => {
+      const isFollowed = await Follow.isFollowed(
+        req.user._id,
+        document.user._id
+      );
+      return {
+        user: document.following,
+        isFollowed,
+      };
+    })
+  );
 
   res.status(httpStatusCodes.OK).send({
     status: "success",
