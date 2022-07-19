@@ -72,7 +72,7 @@ exports.getFollowings = catchAsync(async (req, res, next) => {
     documents.map(async (document) => {
       const isFollowed = await Follow.isFollowed(
         req.user._id,
-        document.user._id
+        document.following._id
       );
       return {
         user: document.following,
